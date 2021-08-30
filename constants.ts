@@ -13,4 +13,4 @@ export enum Messages {
   INVALID_INPUT = "The arithmetic operation is malformed.",
 }
 
-export const OPS_ARR: Operation[] = ["*", "-", "+", "*-", "+-"];
+export const OPS_ARR: Operation[] = ["*", "*-", "-", "+", "+-"];
