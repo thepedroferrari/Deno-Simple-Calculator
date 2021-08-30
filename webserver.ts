@@ -10,7 +10,6 @@ app.use(router.routes()); // Enable reading routes
 router.get("/calc/:exp", (context) => {
   if (context.params && context.params.exp) {
     const msg = calculateString(context.params.exp);
-    console.log(msg);
     context.response.body = {
       success: true,
       msg,
