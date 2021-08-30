@@ -1,5 +1,5 @@
 # Simple calculator in Deno
-This program launches a web server at port 8080 and expects a query param `calc`
+This program launches a web server at port 8080 and expects to hit the route `calc`
 to contain a valid arithmetic string.
 
 The program is only set to resolve sum, sub and multiplications (+ / - / *)

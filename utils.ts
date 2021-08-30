@@ -7,59 +7,20 @@ import {
 import type { Operation } from "./types.ts";
 
 /**
- * @param url string
- * @returns string
- * @fires getStringToCalculate
- * @fires calculateString
- * @emits O(n²)
- * @description Takes a URL and checks if it contains the string to calculate.
- * if the string is invalid it returns an error message. If it is valid it makes
- * calculations using the utility functions of its dependencies.
- * Although this is an expensive algorithm with a high complexity, spending time
- * to tune it might not be much benefitial given the fact that the max-size of
- * any given url can't be greater than 2KB. Unless this is called hundreds+ of
- * times per second I don't see an issue with it.
- */
-export const response = (url: string) => {
-  const stringToCalc = getStringToCalculate(url);
-
-  if (stringToCalc === Messages.MISSING_PARAM_MSG) {
-    // assertion / add tips / help user understand where it went wrong
-    return `${Messages.MISSING_PARAM_MSG}: The URI must contain a parameter named calc`;
-  }
-
-  const calculations = calculateString(stringToCalc);
-  return calculations;
-};
-
-/**
- * @param url string (an URL)
- * @returns string
- * @description get parameters from a URL and check if it contains the expected
- * param that should contain the mathematical expression we want to solve
- * @emits O(1)
- */
-export const getStringToCalculate = (url: string) => {
-  const urlParams = new URLSearchParams(url);
-
-  // Check if the calc param has been passed before continuing
-  const stringToCalc = urlParams.get(URL_PARAM);
-  if (stringToCalc === null) return Messages.MISSING_PARAM_MSG;
-
-  return stringToCalc;
-};
-
-/**
  * @param str string
  * @returns string
  * @description takes up a string and utilises other utility functions in order
  * to get the final result or an error message.
+ * * Although this is an expensive algorithm with a high complexity, spending time
+ * to tune it might not be much benefitial given the fact that the max-size of
+ * any given url can't be greater than 2KB. Unless this is called hundreds+ of
+ * times per second I don't see an issue with it.
  * @fires splitNumbersAndChars
  * @fires validateInput
  * @fires performOperations
  * @emits O(n²)
  */
-const calculateString = (str: string) => {
+export const calculateString = (str: string) => {
   // We shouldn't use eval since strings can be manipulated in a way that even
   // after cleaning up it could be still dangerous. Doing extra work to cleanup
   // the string beats the purpose of simplifying with eval in the first place.

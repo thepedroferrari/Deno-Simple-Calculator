@@ -1,29 +1,27 @@
-import { response } from "./utils.ts";
+import { Application, Router, send } from "https://deno.land/x/oak/mod.ts";
+import { oakCors } from "https://deno.land/x/cors@v1.2.2/mod.ts";
+import { calculateString } from "./utils.ts";
 
-// Start listening on port 8080 of localhost.
-const server = Deno.listen({ port: 8080 });
-console.log(`HTTP webserver running.  Access it at:  http://localhost:8080/`);
+const router = new Router();
+const app = new Application();
+app.use(oakCors()); // Enable CORS for All Routes
+app.use(router.routes()); // Enable reading routes
 
-// Connections to the server will be yielded up as an async iterable.
-for await (const conn of server) {
-  // In order to not be blocking, we need to handle each connection individually
-  // without awaiting the function
-  serveHttp(conn);
-}
-
-async function serveHttp(conn: Deno.Conn) {
-  // This "upgrades" a network connection into an HTTP connection.
-  const httpConn = Deno.serveHttp(conn);
-  // Each request sent over the HTTP connection will be yielded as an async
-  // iterator from the HTTP connection.
-  for await (const requestEvent of httpConn) {
-    const body = response(requestEvent.request.url);
-    // The requestEvent's `.respondWith()` method is how we send the response
-    // back to the client.
-    requestEvent.respondWith(
-      new Response(body, {
-        status: 200,
-      })
-    );
+router.get("/calc/:exp", (context) => {
+  if (context.params && context.params.exp) {
+    const msg = calculateString(context.params.exp);
+    console.log(msg);
+    context.response.body = {
+      success: true,
+      msg,
+    };
+  } else {
+    context.response.body = {
+      success: false,
+      msg: "Failed to get expression",
+    };
   }
-}
+});
+
+console.info("CORS-enabled web server listening on port 8080");
+await app.listen({ port: 8080 });
