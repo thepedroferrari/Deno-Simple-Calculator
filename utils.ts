@@ -7,14 +7,32 @@ import {
 import type { Operation } from "./types.ts";
 
 /**
- *
+ * @param url string
+ * @returns string
+ * @fires getStringToCalculate
+ * @fires calculateString
+ * @emits O(n²)
+ */
+export const response = (url: string) => {
+  const stringToCalc = getStringToCalculate(url);
+
+  if (stringToCalc === Messages.MISSING_PARAM_MSG) {
+    // assertion / add tips / help user understand where it went wrong
+    return `${Messages.MISSING_PARAM_MSG}: The URI must contain a parameter named calc`;
+  }
+
+  const calculations = calculateString(stringToCalc);
+  return calculations;
+};
+
+/**
  * @param url string (an URL)
  * @returns string
  * @description get parameters from a URL and check if it contains the expected
  * param that should contain the mathematical expression we want to solve
  * @emits O(1)
  */
-const getStringToCalculate = (url: string) => {
+export const getStringToCalculate = (url: string) => {
   const urlParams = new URLSearchParams(url);
 
   // Check if the calc param has been passed before continuing
@@ -25,7 +43,6 @@ const getStringToCalculate = (url: string) => {
 };
 
 /**
- *
  * @param str string
  * @returns string
  * @description takes up a string and utilises other utility functions in order
@@ -34,12 +51,13 @@ const getStringToCalculate = (url: string) => {
  * @fires validateInput
  * @fires performOperations
  * @emits O(n²)
- *
  */
 const calculateString = (str: string) => {
   // We shouldn't use eval since strings can be manipulated in a way that even
   // after cleaning up it could be still dangerous. Doing extra work to cleanup
   // the string beats the purpose of simplifying with eval in the first place.
+  // Plus the scope of the project is to work for certain math operations and
+  // not all. It is not a full-fledged calculator.
   // return eval(str);
   const numbersAndOperationsArr = splitNumbersAndChars(str);
   const isValidInput = validateInput(numbersAndOperationsArr);
@@ -51,7 +69,6 @@ const calculateString = (str: string) => {
 };
 
 /**
- *
  * @param a number
  * @param op Operation (+ / - / * / +- / *-)
  * @param b number
@@ -79,7 +96,6 @@ const handleExpression = (a: number, op: Operation, b: number) => {
 };
 
 /**
- *
  * @param numsAndOps string[]
  * @param operation Operation
  * @description Takes the params and checks if there are operations left to be
@@ -125,7 +141,6 @@ const handleOperation = (numsAndOps: string[], operation: Operation) => {
 };
 
 /**
- *
  * @param numsAndOps string[]
  * @returns string
  * @description Is responsible for getting the array of strings that contains
@@ -147,6 +162,7 @@ const performOperations = (numsAndOps: string[]) => {
     // also receive false from handleOperation and can break when that happens.
     // We save a bit on operations checking for while true instead.
     while (true) {
+      // TODO: Investigate the whole operation may be better as a linked list
       const next = handleOperation(result, operation);
       if (next === false) break;
       result = next;
@@ -190,25 +206,4 @@ const validateInput = (input: string[]) => {
     return false;
   }
   return true;
-};
-
-/**
- *
- * @param url string
- * @returns string
- * @fires getStringToCalculate
- * @fires calculateString
- * @emits O(n²)
- *
- */
-export const response = (url: string) => {
-  const stringToCalc = getStringToCalculate(url);
-
-  if (stringToCalc === Messages.MISSING_PARAM_MSG) {
-    // assertion / add tips / help user understand where it went wrong
-    return `${Messages.MISSING_PARAM_MSG}: The URI must contain a parameter named calc`;
-  }
-
-  const calculations = calculateString(stringToCalc);
-  return calculations;
 };
