@@ -12,6 +12,13 @@ import type { Operation } from "./types.ts";
  * @fires getStringToCalculate
  * @fires calculateString
  * @emits O(n²)
+ * @description Takes a URL and checks if it contains the string to calculate.
+ * if the string is invalid it returns an error message. If it is valid it makes
+ * calculations using the utility functions of its dependencies.
+ * Although this is an expensive algorithm with a high complexity, spending time
+ * to tune it might not be much benefitial given the fact that the max-size of
+ * any given url can't be greater than 2KB. Unless this is called hundreds+ of
+ * times per second I don't see an issue with it.
  */
 export const response = (url: string) => {
   const stringToCalc = getStringToCalculate(url);
